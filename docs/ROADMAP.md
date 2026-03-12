@@ -17,18 +17,18 @@ Phase 4           → Optional integrations (Jira, Linear, Notion)
 
 **Goal:** A user can log in, see draft entries from Google Calendar and GitHub, confirm them, and export to Excel.
 
-### Milestone 1.1 — Project Scaffolding
-- [ ] Initialize Next.js 14 project with TypeScript + Tailwind + shadcn/ui
-- [ ] Set up Prisma with PostgreSQL (local Docker)
-- [ ] Configure NextAuth.js with Google provider
-- [ ] Create base database schema (users, integrations, categories, entries)
-- [ ] Set up Docker Compose for local development (app + postgres + redis)
-- [ ] Configure ESLint, Prettier, TypeScript strict mode
-- [ ] Set up GitHub Actions CI (lint + type-check)
+### Milestone 1.1 — Project Scaffolding ✅
+- [x] Initialize Next.js 14 project with TypeScript + Tailwind + shadcn/ui
+- [x] Set up Prisma with PostgreSQL (local Docker)
+- [x] Configure NextAuth.js with Google provider
+- [x] Create base database schema (users, integrations, categories, entries)
+- [x] Set up Docker Compose for local development (app + postgres + redis)
+- [x] Configure ESLint, Prettier, TypeScript strict mode
+- [x] Set up GitHub Actions CI (lint + type-check)
 
-### Milestone 1.2 — Authentication
-- [ ] Google OAuth login/logout
-- [ ] Protected routes (redirect to login if unauthenticated)
+### Milestone 1.2 — Authentication (In Progress)
+- [x] Google OAuth login/logout
+- [x] Protected routes (redirect to login if unauthenticated)
 - [ ] User profile page
 
 ### Milestone 1.3 — Manual Entry

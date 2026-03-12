@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth ────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("member") // member | manager
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // NextAuth relations
+  accounts Account[]
+  sessions Session[]
+
+  // App relations
+  integrations     Integration[]
+  entries          Entry[]
+  signals          Signal[]
+  dailySubmissions DailySubmission[]
+  timers           Timer[]
+  exports          Export[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── Integrations ────────────────────────────────────────────────
+
+model Integration {
+  id           String    @id @default(cuid())
+  userId       String
+  provider     String // google | github | slack | jira | linear | notion
+  accessToken  String?   @db.Text
+  refreshToken String?   @db.Text
+  tokenExpires DateTime?
+  metadata     Json?     @default("{}")
+  lastSyncAt   DateTime?
+  connectedAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
+  @@map("integrations")
+}
+
+// ─── Categories ──────────────────────────────────────────────────
+
+model Category {
+  id    String  @id @default(cuid())
+  name  String  @unique
+  color String?
+
+  entries Entry[]
+  timers  Timer[]
+
+  @@map("categories")
+}
+
+// ─── Signals (raw ingested data) ─────────────────────────────────
+
+model Signal {
+  id         String   @id @default(cuid())
+  userId     String
+  provider   String
+  externalId String?
+  occurredAt DateTime
+  rawData    Json
+  ingestedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, externalId])
+  @@index([userId, occurredAt])
+  @@map("signals")
+}
+
+// ─── Worklog Entries ─────────────────────────────────────────────
+
+model Entry {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime @db.Date
+  categoryId  String?
+  timeHours   Decimal  @db.Decimal(4, 2)
+  description String
+  notes       String?
+  status      String   @default("draft") // draft | confirmed | submitted
+  source      String?  // google_calendar | github | slack | jira | manual | ai
+  signalIds   String[] @default([])
+  aiSuggested Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  @@index([userId, date])
+  @@map("entries")
+}
+
+// ─── Daily Submissions ───────────────────────────────────────────
+
+model DailySubmission {
+  id          String    @id @default(cuid())
+  userId      String
+  date        DateTime  @db.Date
+  submittedAt DateTime?
+  totalHours  Decimal?  @db.Decimal(5, 2)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@map("daily_submissions")
+}
+
+// ─── Timers ──────────────────────────────────────────────────────
+
+model Timer {
+  id          String    @id @default(cuid())
+  userId      String
+  description String?
+  categoryId  String?
+  startedAt   DateTime
+  stoppedAt   DateTime?
+  converted   Boolean   @default(false)
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  @@map("timers")
+}
+
+// ─── Exports ─────────────────────────────────────────────────────
+
+model Export {
+  id        String    @id @default(cuid())
+  userId    String?
+  format    String // xlsx | csv
+  dateFrom  DateTime? @db.Date
+  dateTo    DateTime? @db.Date
+  scope     String? // self | team
+  filePath  String?
+  createdAt DateTime  @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("exports")
+}
