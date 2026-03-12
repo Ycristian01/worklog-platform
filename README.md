@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WorkLog Platform
 
-## Getting Started
+> Automated daily activity reporting for engineering teams.
 
-First, run the development server:
+Auto-collects activity from Google Calendar, GitHub, and Slack. Presents a daily confirmation dashboard. Exports to Excel in the team's existing worklog format.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick Navigation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Document | Purpose |
+|---|---|
+| [`CONTEXT.md`](./CONTEXT.md) | Problem statement, worklog format, user journey, integration specs |
+| [`architecture/TECHNICAL_DESIGN.md`](./architecture/TECHNICAL_DESIGN.md) | Tech stack, DB schema, API routes, sync architecture |
+| [`docs/FEATURES.md`](./docs/FEATURES.md) | Feature-by-feature specification with scenarios and acceptance criteria |
+| [`docs/ROADMAP.md`](./docs/ROADMAP.md) | Phased development plan with milestones and tasks |
+| [`docs/AI_AGENT_BRIEF.md`](./docs/AI_AGENT_BRIEF.md) | Briefing document for AI coding agents starting a new session |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui
+- **Backend:** Next.js API routes, Prisma ORM, PostgreSQL
+- **Background jobs:** BullMQ + Redis
+- **Auth:** NextAuth.js v5 (Google + GitHub OAuth)
+- **AI:** Anthropic Claude API
+- **Export:** ExcelJS
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Current Status
 
-## Deploy on Vercel
+> See [`docs/ROADMAP.md`](./docs/ROADMAP.md) for the full plan.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Phase 1 — MVP** not yet started.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Worklog Format Reference
+
+The export must match this column structure exactly:
+
+| Name | Category | Date | Time | Comments | Other |
+|---|---|---|---|---|---|
+| Alejandro Vásquez | New Feature/Enhancements | 2024-01-15 | 2.5 | PR Created \| trashie-api: Add QR validation | |
+
+**Categories:** Administration · Engineering Operations · New Feature/Enhancements · Production Support
