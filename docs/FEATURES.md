@@ -13,10 +13,10 @@
 - Admin can view all team members in the team view.
 
 **Acceptance criteria:**
-- [ ] Login via Google OAuth works.
-- [ ] User profile (name, email, avatar) populated from provider.
-- [ ] Sessions persist across browser restarts (configurable expiry).
-- [ ] Logout clears session and redirects to login.
+- [x] Login via Google OAuth works.
+- [x] User profile (name, email, avatar) populated from provider.
+- [x] Sessions persist across browser restarts (configurable expiry).
+- [x] Logout clears session and redirects to login.
 
 ---
 
@@ -39,11 +39,11 @@ submitted → part of a submitted day (locked)
 ```
 
 **Acceptance criteria:**
-- [ ] Shows correct entries for selected date.
-- [ ] Draft entries have visual distinction from confirmed entries.
-- [ ] Navigation between dates works (prev/next arrows + date picker).
-- [ ] Hours total shown per category and overall.
-- [ ] Submit button disabled when unconfirmed drafts exist.
+- [x] Shows correct entries for selected date.
+- [x] Draft entries have visual distinction from confirmed entries.
+- [x] Navigation between dates works (prev/next arrows).
+- [x] Hours total shown overall.
+- [x] Submit button disabled when unconfirmed drafts exist.
 
 ---
 
@@ -69,10 +69,10 @@ submitted → part of a submitted day (locked)
 - User deletes a false-positive draft entry.
 
 **Acceptance criteria:**
-- [ ] Inline edit of all fields works without page reload.
+- [x] Inline edit of all fields works without page reload.
 - [ ] Merge combines selected entries into one and deletes originals.
 - [ ] Split creates two new entries, deletes original, enforces hours sum.
-- [ ] Manual entry form validates required fields before saving.
+- [x] Manual entry form validates required fields before saving.
 - [ ] Deleted entries can be recovered within the same session (undo toast).
 
 ---

@@ -26,21 +26,21 @@ Phase 4           → Optional integrations (Jira, Linear, Notion)
 - [x] Configure ESLint, Prettier, TypeScript strict mode
 - [x] Set up GitHub Actions CI (lint + type-check)
 
-### Milestone 1.2 — Authentication (In Progress)
+### Milestone 1.2 — Authentication ✅
 - [x] Google OAuth login/logout
 - [x] Protected routes (redirect to login if unauthenticated)
-- [ ] User profile page
+- [x] User profile page (account info, connected integrations, sign out)
 
-### Milestone 1.3 — Manual Entry
-- [ ] Daily dashboard page (today's view)
-- [ ] Date navigation (prev/next day)
-- [ ] Create manual entry form
-- [ ] Edit entry inline (description, category, time, notes)
-- [ ] Delete entry
-- [ ] Confirm entry (draft → confirmed)
-- [ ] Submit day (confirmed → submitted)
+### Milestone 1.3 — Manual Entry ✅
+- [x] Daily dashboard page (today's view)
+- [x] Date navigation (prev/next day + "Today" shortcut)
+- [x] Create manual entry form (dialog with description, hours, category, notes)
+- [x] Edit entry inline (description, category, time, notes)
+- [x] Delete entry
+- [x] Confirm entry (draft → confirmed) — per entry + "Confirm All" bulk action
+- [x] Submit day (confirmed → submitted) — locks entries to read-only
 
-### Milestone 1.4 — Google Calendar Integration
+### Milestone 1.4 — Google Calendar Integration (Up Next)
 - [ ] Connect Google Calendar (add calendar.readonly scope to OAuth)
 - [ ] Manual "Sync Calendar" button on dashboard
 - [ ] Fetch and display today's calendar events as draft entries
