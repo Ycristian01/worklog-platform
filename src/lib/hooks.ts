@@ -173,3 +173,28 @@ export function useSubmitDay() {
     },
   });
 }
+
+export function useSyncCalendar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (date: string) => {
+      const res = await fetch("/api/sync/google-calendar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? "Failed to sync calendar");
+      }
+      return res.json() as Promise<{
+        synced: number;
+        skipped: number;
+        total: number;
+      }>;
+    },
+    onSuccess: (_data, date) => {
+      queryClient.invalidateQueries({ queryKey: ["entries", date] });
+    },
+  });
+}

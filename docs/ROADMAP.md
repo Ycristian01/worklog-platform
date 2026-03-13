@@ -40,14 +40,17 @@ Phase 4           → Optional integrations (Jira, Linear, Notion)
 - [x] Confirm entry (draft → confirmed) — per entry + "Confirm All" bulk action
 - [x] Submit day (confirmed → submitted) — locks entries to read-only
 
-### Milestone 1.4 — Google Calendar Integration (Up Next)
-- [ ] Connect Google Calendar (add calendar.readonly scope to OAuth)
-- [ ] Manual "Sync Calendar" button on dashboard
-- [ ] Fetch and display today's calendar events as draft entries
-- [ ] Category inference from event title keywords
-- [ ] Handle duplicate sync (idempotent via signal external_id)
+### Milestone 1.4 — Google Calendar Integration ✅
+- [x] Connect Google Calendar (calendar.readonly scope already in OAuth config)
+- [x] Manual "Sync Calendar" button on dashboard
+- [x] Fetch and display calendar events as draft entries for any date
+- [x] Category inference from event title keywords
+- [x] Handle duplicate sync (idempotent via signal external_id)
+- [x] Token refresh when Google access token expires
+- [x] Skip all-day events, declined events, and events < 5 min
+- [x] Round event duration to nearest 0.25h
 
-### Milestone 1.5 — GitHub Integration
+### Milestone 1.5 — GitHub Integration (Up Next)
 - [ ] GitHub OAuth connect flow
 - [ ] Manual "Sync GitHub" button
 - [ ] Fetch commits, PRs, reviews for current user
