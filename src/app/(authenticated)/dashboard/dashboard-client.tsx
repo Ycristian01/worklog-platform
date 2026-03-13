@@ -11,7 +11,9 @@ import {
   CheckCheck,
   Send,
   CalendarDays,
+  RefreshCw,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { EntryCard } from "@/components/entry-card";
 import { CreateEntryDialog } from "@/components/create-entry-dialog";
 import {
@@ -20,6 +22,7 @@ import {
   useDayStatus,
   useConfirmEntry,
   useSubmitDay,
+  useSyncCalendar,
 } from "@/lib/hooks";
 import { toast } from "sonner";
 
@@ -36,6 +39,7 @@ export function DashboardClient({ userName }: { userName: string }) {
   const { data: dayStatus } = useDayStatus(dateStr);
   const confirmEntry = useConfirmEntry();
   const submitDay = useSubmitDay();
+  const syncCalendar = useSyncCalendar();
 
   const isSubmitted = dayStatus?.submitted ?? false;
   const drafts = entries?.filter((e) => e.status === "draft") ?? [];
@@ -56,6 +60,19 @@ export function DashboardClient({ userName }: { userName: string }) {
       );
     });
     if (drafts.length > 0) toast.success(`Confirmed ${drafts.length} entries`);
+  };
+
+  const handleSyncCalendar = () => {
+    syncCalendar.mutate(dateStr, {
+      onSuccess: (data) => {
+        if (data.synced > 0) {
+          toast.success(`Synced ${data.synced} calendar event${data.synced !== 1 ? "s" : ""}`);
+        } else {
+          toast.info("No new calendar events to sync");
+        }
+      },
+      onError: (err) => toast.error(err.message),
+    });
   };
 
   const handleSubmitDay = () => {
@@ -121,6 +138,22 @@ export function DashboardClient({ userName }: { userName: string }) {
           )}
         </div>
         <div className="flex items-center gap-2">
+          {!isSubmitted && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSyncCalendar}
+              disabled={syncCalendar.isPending}
+            >
+              <RefreshCw
+                className={cn(
+                  "mr-2 h-4 w-4",
+                  syncCalendar.isPending && "animate-spin"
+                )}
+              />
+              Sync Calendar
+            </Button>
+          )}
           {drafts.length > 0 && !isSubmitted && (
             <Button
               variant="outline"

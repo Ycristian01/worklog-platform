@@ -98,6 +98,12 @@ export const startTimerSchema = z.object({
   categoryId: z.string().cuid().optional(),
 });
 
+// ─── Sync schemas ───────────────────────────────────────────────
+
+export const syncCalendarSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
 // ─── Types ───────────────────────────────────────────────────────
 
 export type CreateEntryInput = z.infer<typeof createEntrySchema>;
@@ -107,3 +113,4 @@ export type SplitEntryInput = z.infer<typeof splitEntrySchema>;
 export type EntriesQuery = z.infer<typeof entriesQuerySchema>;
 export type ExportInput = z.infer<typeof exportSchema>;
 export type StartTimerInput = z.infer<typeof startTimerSchema>;
+export type SyncCalendarInput = z.infer<typeof syncCalendarSchema>;
