@@ -152,6 +152,12 @@ export async function POST(req: NextRequest) {
       continue;
     }
 
+    // Skip events that haven't ended yet (only sync past events)
+    if (endMs > Date.now()) {
+      skipped++;
+      continue;
+    }
+
     const timeHours = roundToQuarterHour(durationMinutes);
     const title = event.summary || "Untitled event";
 
