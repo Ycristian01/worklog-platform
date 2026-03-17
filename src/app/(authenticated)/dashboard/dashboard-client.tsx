@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, addDays, subDays, isToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +40,30 @@ export function DashboardClient({ userName }: { userName: string }) {
   const confirmEntry = useConfirmEntry();
   const submitDay = useSubmitDay();
   const syncCalendar = useSyncCalendar();
+
+  // Auto-sync calendar once when viewing today on initial load
+  const [autoSynced, setAutoSynced] = useState(false);
+  const syncCalendarMutate = syncCalendar.mutate;
+  useEffect(() => {
+    if (
+      isToday(selectedDate) &&
+      !entriesLoading &&
+      entries !== undefined &&
+      !autoSynced
+    ) {
+      setAutoSynced(true);
+      syncCalendarMutate(dateStr, {
+        onSuccess: (data) => {
+          if (data.synced > 0) {
+            toast.success(
+              `Auto-synced ${data.synced} calendar event${data.synced !== 1 ? "s" : ""}`
+            );
+          }
+        },
+        onError: () => {},
+      });
+    }
+  }, [selectedDate, entriesLoading, entries, dateStr, autoSynced, syncCalendarMutate]);
 
   const isSubmitted = dayStatus?.submitted ?? false;
   const drafts = entries?.filter((e) => e.status === "draft") ?? [];
