@@ -198,3 +198,69 @@ export function useSyncCalendar() {
     },
   });
 }
+
+export interface GitHubOrg {
+  login: string;
+  avatarUrl: string;
+}
+
+export function useGitHubOrgs() {
+  return useQuery<{ orgs: GitHubOrg[]; selectedOrg: string | null }>({
+    queryKey: ["githubOrgs"],
+    queryFn: async () => {
+      const res = await fetch("/api/integrations/github/orgs");
+      if (!res.ok) {
+        if (res.status === 404) return { orgs: [], selectedOrg: null };
+        throw new Error("Failed to fetch GitHub orgs");
+      }
+      return res.json();
+    },
+  });
+}
+
+export function useUpdateGitHubSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { githubOrg: string | null }) => {
+      const res = await fetch("/api/integrations/github/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? "Failed to update GitHub settings");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["githubOrgs"] });
+    },
+  });
+}
+
+export function useSyncGitHub() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (date: string) => {
+      const res = await fetch("/api/sync/github", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? "Failed to sync GitHub");
+      }
+      return res.json() as Promise<{
+        synced: number;
+        skipped: number;
+        total: number;
+      }>;
+    },
+    onSuccess: (_data, date) => {
+      queryClient.invalidateQueries({ queryKey: ["entries", date] });
+    },
+  });
+}

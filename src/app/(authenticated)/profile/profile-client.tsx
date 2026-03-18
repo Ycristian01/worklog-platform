@@ -10,10 +10,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { LogOut, Github, Calendar } from "lucide-react";
 import { format } from "date-fns";
+import { useGitHubOrgs, useUpdateGitHubSettings } from "@/lib/hooks";
+import { toast } from "sonner";
 
 interface ProfileProps {
   user: {
@@ -45,6 +54,7 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
     .slice(0, 2);
 
   const connectedProviders = new Set(integrations.map((i) => i.provider));
+  const githubConnected = connectedProviders.has("github");
 
   return (
     <div className="mx-auto max-w-2xl p-6 space-y-6">
@@ -127,6 +137,8 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
         </CardContent>
       </Card>
 
+      {githubConnected && <GitHubOrgSelector />}
+
       <Card>
         <CardContent className="pt-6">
           <Button
@@ -139,5 +151,66 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function GitHubOrgSelector() {
+  const { data, isLoading } = useGitHubOrgs();
+  const updateSettings = useUpdateGitHubSettings();
+
+  const handleOrgChange = (value: string | null) => {
+    if (!value) return;
+    const orgValue = value === "__all__" ? null : value;
+    updateSettings.mutate(
+      { githubOrg: orgValue },
+      {
+        onSuccess: () => {
+          toast.success(
+            orgValue
+              ? `GitHub sync filtered to ${orgValue}`
+              : "GitHub sync set to all organizations"
+          );
+        },
+        onError: (err) => toast.error(err.message),
+      }
+    );
+  };
+
+  if (isLoading || !data) return null;
+  if (data.orgs.length === 0) return null;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>GitHub Settings</CardTitle>
+        <CardDescription>
+          Choose which organization to sync activity from
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium whitespace-nowrap">
+            Organization
+          </label>
+          <Select
+            value={data.selectedOrg ?? "__all__"}
+            onValueChange={handleOrgChange}
+            disabled={updateSettings.isPending}
+          >
+            <SelectTrigger className="w-64">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__all__">All organizations</SelectItem>
+              {data.orgs.map((org) => (
+                <SelectItem key={org.login} value={org.login}>
+                  {org.login}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
