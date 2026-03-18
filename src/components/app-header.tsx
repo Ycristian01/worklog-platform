@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, User, LogOut, ChevronDown } from "lucide-react";
+import { LayoutDashboard, User, LogOut, ChevronDown, Download } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 export function AppHeader() {
@@ -45,6 +45,12 @@ export function AppHeader() {
             <Button variant="ghost" size="sm">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Dashboard
+            </Button>
+          </Link>
+          <Link href="/export">
+            <Button variant="ghost" size="sm">
+              <Download className="mr-2 h-4 w-4" />
+              Export
             </Button>
           </Link>
           <div className="relative" ref={menuRef}>

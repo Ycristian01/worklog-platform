@@ -58,11 +58,11 @@ Phase 4           → Optional integrations (Jira, Linear, Notion)
 - [x] Category inference and time estimation
 - [x] Draft entries created from GitHub activity
 
-### Milestone 1.6 — Export
-- [ ] Excel export matching Trashie worklog columns exactly
-- [ ] CSV export
-- [ ] Date range filter for export
-- [ ] Download button with loading state
+### Milestone 1.6 — Export ✅
+- [x] Excel export matching Trashie worklog columns exactly
+- [x] CSV export
+- [x] Date range filter for export
+- [x] Download button with loading state
 
 ---
 
