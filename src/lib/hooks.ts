@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { ExportInput } from "@/lib/schemas";
 
 export interface Category {
   id: string;
@@ -195,6 +196,39 @@ export function useSyncCalendar() {
     },
     onSuccess: (_data, date) => {
       queryClient.invalidateQueries({ queryKey: ["entries", date] });
+    },
+  });
+}
+
+export function useExport() {
+  return useMutation({
+    mutationFn: async (data: ExportInput) => {
+      const res = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? "Failed to export");
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get("Content-Disposition") ?? "";
+      const match = disposition.match(/filename="(.+)"/);
+      const filename = match?.[1] ?? `worklog.${data.format}`;
+
+      // Trigger download
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      return { filename };
     },
   });
 }
