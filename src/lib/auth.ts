@@ -33,6 +33,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
+        session.user.role = (user as unknown as { role?: string }).role ?? "member";
       }
       return session;
     },
@@ -40,6 +41,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   events: {
     async signIn({ user, account }) {
       if (!account || !user.id) return;
+
+      // Auto-promote managers based on env config
+      const managerEmails = (process.env.MANAGER_EMAILS ?? "")
+        .split(",")
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean);
+      if (user.email && managerEmails.includes(user.email.toLowerCase())) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role: "manager" },
+        });
+      }
 
       // Store integration tokens after user is created by the adapter
       if (account.provider === "google" || account.provider === "github") {

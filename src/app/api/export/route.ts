@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { requireManager } from "@/lib/require-manager";
 import { exportSchema } from "@/lib/schemas";
 import ExcelJS from "exceljs";
 
@@ -17,6 +18,17 @@ export async function POST(req: NextRequest) {
   }
 
   const { format, from, to, scope } = parsed.data;
+
+  // Team export requires manager role
+  if (scope === "team") {
+    const mgr = await requireManager();
+    if (!mgr) {
+      return NextResponse.json(
+        { error: "Forbidden: manager role required" },
+        { status: 403 }
+      );
+    }
+  }
 
   const where: Record<string, unknown> = {
     status: "submitted",

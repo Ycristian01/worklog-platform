@@ -36,6 +36,7 @@ interface EntryCardProps {
   entry: Entry;
   categories: Category[];
   date: string;
+  readOnly?: boolean;
 }
 
 const SOURCE_ICONS: Record<string, React.ReactNode> = {
@@ -51,7 +52,7 @@ const STATUS_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
   submitted: "default",
 };
 
-export function EntryCard({ entry, categories, date }: EntryCardProps) {
+export function EntryCard({ entry, categories, date, readOnly }: EntryCardProps) {
   const [editing, setEditing] = useState(false);
   const [description, setDescription] = useState(entry.description);
   const [timeHours, setTimeHours] = useState(String(entry.timeHours));
@@ -214,7 +215,7 @@ export function EntryCard({ entry, categories, date }: EntryCardProps) {
             )}
           </div>
         </div>
-        {!isSubmitted && (
+        {!isSubmitted && !readOnly && (
           <div className="flex items-center gap-1">
             {isDraft && (
               <Button
