@@ -12,6 +12,7 @@ import {
   Send,
   CalendarDays,
   RefreshCw,
+  Github,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EntryCard } from "@/components/entry-card";
@@ -23,6 +24,7 @@ import {
   useConfirmEntry,
   useSubmitDay,
   useSyncCalendar,
+  useSyncGitHub,
 } from "@/lib/hooks";
 import { toast } from "sonner";
 
@@ -40,10 +42,12 @@ export function DashboardClient({ userName }: { userName: string }) {
   const confirmEntry = useConfirmEntry();
   const submitDay = useSubmitDay();
   const syncCalendar = useSyncCalendar();
+  const syncGitHub = useSyncGitHub();
 
-  // Auto-sync calendar once when viewing today on initial load
+  // Auto-sync calendar and GitHub once when viewing today on initial load
   const [autoSynced, setAutoSynced] = useState(false);
   const syncCalendarMutate = syncCalendar.mutate;
+  const syncGitHubMutate = syncGitHub.mutate;
   useEffect(() => {
     if (
       isToday(selectedDate) &&
@@ -62,8 +66,18 @@ export function DashboardClient({ userName }: { userName: string }) {
         },
         onError: () => {},
       });
+      syncGitHubMutate(dateStr, {
+        onSuccess: (data) => {
+          if (data.synced > 0) {
+            toast.success(
+              `Auto-synced ${data.synced} GitHub activit${data.synced !== 1 ? "ies" : "y"}`
+            );
+          }
+        },
+        onError: () => {},
+      });
     }
-  }, [selectedDate, entriesLoading, entries, dateStr, autoSynced, syncCalendarMutate]);
+  }, [selectedDate, entriesLoading, entries, dateStr, autoSynced, syncCalendarMutate, syncGitHubMutate]);
 
   const isSubmitted = dayStatus?.submitted ?? false;
   const drafts = entries?.filter((e) => e.status === "draft") ?? [];
@@ -93,6 +107,19 @@ export function DashboardClient({ userName }: { userName: string }) {
           toast.success(`Synced ${data.synced} calendar event${data.synced !== 1 ? "s" : ""}`);
         } else {
           toast.info("No new calendar events to sync");
+        }
+      },
+      onError: (err) => toast.error(err.message),
+    });
+  };
+
+  const handleSyncGitHub = () => {
+    syncGitHub.mutate(dateStr, {
+      onSuccess: (data) => {
+        if (data.synced > 0) {
+          toast.success(`Synced ${data.synced} GitHub activit${data.synced !== 1 ? "ies" : "y"}`);
+        } else {
+          toast.info("No new GitHub activity to sync");
         }
       },
       onError: (err) => toast.error(err.message),
@@ -163,20 +190,36 @@ export function DashboardClient({ userName }: { userName: string }) {
         </div>
         <div className="flex items-center gap-2">
           {!isSubmitted && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSyncCalendar}
-              disabled={syncCalendar.isPending}
-            >
-              <RefreshCw
-                className={cn(
-                  "mr-2 h-4 w-4",
-                  syncCalendar.isPending && "animate-spin"
-                )}
-              />
-              Sync Calendar
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSyncCalendar}
+                disabled={syncCalendar.isPending}
+              >
+                <RefreshCw
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    syncCalendar.isPending && "animate-spin"
+                  )}
+                />
+                Sync Calendar
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSyncGitHub}
+                disabled={syncGitHub.isPending}
+              >
+                <Github
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    syncGitHub.isPending && "animate-spin"
+                  )}
+                />
+                Sync GitHub
+              </Button>
+            </>
           )}
           {drafts.length > 0 && !isSubmitted && (
             <Button

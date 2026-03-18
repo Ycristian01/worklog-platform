@@ -104,6 +104,10 @@ export const syncCalendarSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
+export const syncGitHubSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
 // ─── Types ───────────────────────────────────────────────────────
 
 export type CreateEntryInput = z.infer<typeof createEntrySchema>;
@@ -114,3 +118,4 @@ export type EntriesQuery = z.infer<typeof entriesQuerySchema>;
 export type ExportInput = z.infer<typeof exportSchema>;
 export type StartTimerInput = z.infer<typeof startTimerSchema>;
 export type SyncCalendarInput = z.infer<typeof syncCalendarSchema>;
+export type SyncGitHubInput = z.infer<typeof syncGitHubSchema>;

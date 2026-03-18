@@ -50,13 +50,13 @@ Phase 4           → Optional integrations (Jira, Linear, Notion)
 - [x] Skip all-day events, declined events, and events < 5 min
 - [x] Round event duration to nearest 0.25h
 
-### Milestone 1.5 — GitHub Integration (Up Next)
-- [ ] GitHub OAuth connect flow
-- [ ] Manual "Sync GitHub" button
-- [ ] Fetch commits, PRs, reviews for current user
-- [ ] Group commits per repo per day
-- [ ] Category inference and time estimation
-- [ ] Draft entries created from GitHub activity
+### Milestone 1.5 — GitHub Integration ✅
+- [x] GitHub OAuth connect flow
+- [x] Manual "Sync GitHub" button
+- [x] Fetch commits, PRs, reviews for current user
+- [x] Group commits per repo per day
+- [x] Category inference and time estimation
+- [x] Draft entries created from GitHub activity
 
 ### Milestone 1.6 — Export
 - [ ] Excel export matching Trashie worklog columns exactly
