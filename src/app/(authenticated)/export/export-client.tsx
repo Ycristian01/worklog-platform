@@ -19,9 +19,12 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Download, FileSpreadsheet, FileText } from "lucide-react";
+import { Download, FileSpreadsheet, FileText, Users, User } from "lucide-react";
 import { useExport } from "@/lib/hooks";
+import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+
+type ExportScope = "self" | "team";
 
 type ExportFormat = "xlsx" | "csv";
 
@@ -58,9 +61,12 @@ const presets = [
 ];
 
 export function ExportClient() {
+  const { data: session } = useSession();
+  const isManager = session?.user?.role === "manager";
   const [fromDate, setFromDate] = useState(() => toDateStr(startOfMonth(new Date())));
   const [toDate, setToDate] = useState(() => toDateStr(new Date()));
   const [exportFormat, setExportFormat] = useState<ExportFormat>("xlsx");
+  const [scope, setScope] = useState<ExportScope>("self");
   const exportMutation = useExport();
 
   const handleExport = () => {
@@ -78,7 +84,7 @@ export function ExportClient() {
         format: exportFormat,
         from: fromDate,
         to: toDate,
-        scope: "self",
+        scope,
       },
       {
         onSuccess: (data) => {
@@ -148,6 +154,41 @@ export function ExportClient() {
           </div>
         </CardContent>
       </Card>
+
+      {isManager && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Scope</CardTitle>
+            <CardDescription>
+              Export your entries or the entire team
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select
+              value={scope}
+              onValueChange={(v) => setScope(v as ExportScope)}
+            >
+              <SelectTrigger className="w-64">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="self">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    My entries
+                  </div>
+                </SelectItem>
+                <SelectItem value="team">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Entire team
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

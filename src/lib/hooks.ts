@@ -273,6 +273,67 @@ export function useUpdateGitHubSettings() {
   });
 }
 
+// ─── Team hooks ─────────────────────────────────────────────────
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  role: string;
+}
+
+export interface TeamSubmission {
+  userId: string;
+  userName: string;
+  userImage: string | null;
+  date: string;
+  submitted: boolean;
+  totalHours: number;
+  entryCount: number;
+}
+
+export function useTeamMembers() {
+  return useQuery<{ members: TeamMember[] }>({
+    queryKey: ["team", "members"],
+    queryFn: async () => {
+      const res = await fetch("/api/team/members");
+      if (!res.ok) throw new Error("Failed to fetch team members");
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useTeamSubmissions(from: string, to: string) {
+  return useQuery<{
+    members: { id: string; name: string; image: string | null }[];
+    submissions: TeamSubmission[];
+  }>({
+    queryKey: ["team", "submissions", from, to],
+    queryFn: async () => {
+      const res = await fetch(`/api/team/submissions?from=${from}&to=${to}`);
+      if (!res.ok) throw new Error("Failed to fetch team submissions");
+      return res.json();
+    },
+    enabled: !!from && !!to,
+  });
+}
+
+export function useTeamMemberEntries(userId: string, date: string) {
+  return useQuery<Entry[]>({
+    queryKey: ["team", "entries", userId, date],
+    queryFn: async () => {
+      const res = await fetch(`/api/team/entries?userId=${userId}&date=${date}`);
+      if (!res.ok) throw new Error("Failed to fetch member entries");
+      return res.json();
+    },
+    enabled: !!userId && !!date,
+  });
+}
+
+// ─── Sync hooks ─────────────────────────────────────────────────
+
 export function useSyncGitHub() {
   const queryClient = useQueryClient();
 

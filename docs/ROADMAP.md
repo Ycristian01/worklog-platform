@@ -64,6 +64,14 @@ Phase 4           → Optional integrations (Jira, Linear, Notion)
 - [x] Date range filter for export
 - [x] Download button with loading state
 
+### Milestone 1.7 — Admin & Team View ✅
+- [x] Role system: expose `role` in session, `MANAGER_EMAILS` env auto-promotion, `requireManager()` helper
+- [x] Security fix: guard `scope: "team"` in export API with 403
+- [x] Team API routes: `/api/team/members`, `/api/team/submissions`, `/api/team/entries` (manager-only)
+- [x] Team overview page (`/team`): weekly submissions grid with member status
+- [x] Member detail view (`/team/[userId]`): read-only dashboard with date navigation
+- [x] Navigation: conditional "Team" link + export scope toggle for managers
+
 ---
 
 ## Phase 2 — Background Sync + AI
@@ -121,10 +129,7 @@ Phase 4           → Optional integrations (Jira, Linear, Notion)
 - [ ] Email notifications (configurable)
 
 ### Milestone 3.4 — Team View
-- [ ] Role system: member vs. manager
-- [ ] Manager can view any team member's daily log
-- [ ] Team summary table
-- [ ] Team-wide export
+> Moved to Milestone 1.7 (Phase 1) — see above
 
 ### Milestone 3.5 — Merge / Split
 - [ ] Multi-select entries on dashboard

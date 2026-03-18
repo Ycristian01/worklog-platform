@@ -108,6 +108,18 @@ export const syncGitHubSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
+// ─── Team schemas ───────────────────────────────────────────────
+
+export const teamSubmissionsQuerySchema = z.object({
+  from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
+export const teamEntriesQuerySchema = z.object({
+  userId: z.string().cuid(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
 // ─── Types ───────────────────────────────────────────────────────
 
 export type CreateEntryInput = z.infer<typeof createEntrySchema>;

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, User, LogOut, ChevronDown, Download } from "lucide-react";
+import { LayoutDashboard, User, LogOut, ChevronDown, Download, Users } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 export function AppHeader() {
@@ -47,6 +47,14 @@ export function AppHeader() {
               Dashboard
             </Button>
           </Link>
+          {session?.user?.role === "manager" && (
+            <Link href="/team">
+              <Button variant="ghost" size="sm">
+                <Users className="mr-2 h-4 w-4" />
+                Team
+              </Button>
+            </Link>
+          )}
           <Link href="/export">
             <Button variant="ghost" size="sm">
               <Download className="mr-2 h-4 w-4" />
