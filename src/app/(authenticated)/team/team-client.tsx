@@ -50,7 +50,6 @@ export function TeamClient() {
     [weekStart, weekEnd]
   );
 
-  // Build lookup: userId -> date -> submission
   const submissionMap = useMemo(() => {
     const map = new Map<string, Map<string, { submitted: boolean; totalHours: number; entryCount: number }>>();
     if (!data?.submissions) return map;
@@ -68,10 +67,10 @@ export function TeamClient() {
   const isCurrentWeek = isSameWeek(weekStart, new Date(), { weekStartsOn: 1 });
 
   return (
-    <div className="mx-auto max-w-5xl p-6 space-y-6">
+    <div className="mx-auto max-w-5xl p-6 space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold">Team Overview</h1>
-        <p className="text-muted-foreground">
+        <h1 className="font-display text-3xl font-semibold tracking-tight">Team Overview</h1>
+        <p className="mt-1 text-muted-foreground">
           Weekly submission status for all team members
         </p>
       </div>
@@ -82,16 +81,18 @@ export function TeamClient() {
           variant="outline"
           size="icon"
           onClick={() => setWeekStart(subWeeks(weekStart, 1))}
+          className="h-9 w-9 rounded-lg border-border/60"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="min-w-[220px] text-center font-medium">
+        <span className="min-w-[220px] text-center font-medium tabular-nums">
           {format(weekStart, "MMM d")} &ndash; {format(weekEnd, "MMM d, yyyy")}
         </span>
         <Button
           variant="outline"
           size="icon"
           onClick={() => setWeekStart(addWeeks(weekStart, 1))}
+          className="h-9 w-9 rounded-lg border-border/60"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -102,6 +103,7 @@ export function TeamClient() {
             onClick={() =>
               setWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }))
             }
+            className="text-accent hover:text-accent border-border/60"
           >
             This week
           </Button>
@@ -109,9 +111,9 @@ export function TeamClient() {
       </div>
 
       {/* Submissions grid */}
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Submissions</CardTitle>
+          <CardTitle className="font-display text-lg">Submissions</CardTitle>
           <CardDescription>
             Click a member name to view their entries
           </CardDescription>
@@ -120,34 +122,39 @@ export function TeamClient() {
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-12 w-full" />
+                <Skeleton key={i} className="h-12 w-full rounded-lg" />
               ))}
             </div>
           ) : !data?.members?.length ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">
+            <p className="text-sm text-muted-foreground py-8 text-center">
               No team members found
             </p>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto -mx-4 px-4">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[200px]">Member</TableHead>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="w-[200px] text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">Member</TableHead>
                     {days.map((day) => (
                       <TableHead
                         key={day.toISOString()}
                         className={cn(
                           "text-center min-w-[80px]",
-                          isToday(day) && "bg-muted/50"
+                          isToday(day) && "bg-accent/5 rounded-t-lg"
                         )}
                       >
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-[0.65rem] uppercase tracking-wider text-muted-foreground/60 font-medium">
                           {format(day, "EEE")}
                         </div>
-                        <div>{format(day, "d")}</div>
+                        <div className={cn(
+                          "text-sm font-semibold tabular-nums",
+                          isToday(day) && "text-accent"
+                        )}>
+                          {format(day, "d")}
+                        </div>
                       </TableHead>
                     ))}
-                    <TableHead className="text-center min-w-[80px]">
+                    <TableHead className="text-center min-w-[80px] text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">
                       Total
                     </TableHead>
                   </TableRow>
@@ -158,15 +165,15 @@ export function TeamClient() {
                     let weekTotal = 0;
 
                     return (
-                      <TableRow key={member.id}>
+                      <TableRow key={member.id} className="hover:bg-muted/30">
                         <TableCell>
                           <Link
                             href={`/team/${member.id}`}
-                            className="flex items-center gap-2 hover:underline"
+                            className="flex items-center gap-2.5 hover:text-accent transition-colors"
                           >
-                            <Avatar className="h-7 w-7">
+                            <Avatar className="h-7 w-7 ring-1 ring-border/50">
                               <AvatarImage src={member.image ?? undefined} />
-                              <AvatarFallback className="text-xs">
+                              <AvatarFallback className="text-[0.6rem] font-medium bg-secondary">
                                 {member.name
                                   .split(" ")
                                   .map((n) => n[0])
@@ -191,22 +198,22 @@ export function TeamClient() {
                               key={dateStr}
                               className={cn(
                                 "text-center",
-                                isToday(day) && "bg-muted/50"
+                                isToday(day) && "bg-accent/5"
                               )}
                             >
                               {!cell || cell.entryCount === 0 ? (
-                                <Minus className="mx-auto h-4 w-4 text-muted-foreground/40" />
+                                <Minus className="mx-auto h-4 w-4 text-muted-foreground/25" />
                               ) : cell.submitted ? (
                                 <div className="flex flex-col items-center gap-0.5">
-                                  <CheckCircle className="h-4 w-4 text-green-600" />
-                                  <span className="text-xs text-green-700 font-medium">
+                                  <CheckCircle className="h-4 w-4 text-emerald-500" />
+                                  <span className="text-[0.65rem] text-emerald-600 font-semibold tabular-nums">
                                     {cell.totalHours}h
                                   </span>
                                 </div>
                               ) : (
                                 <div className="flex flex-col items-center gap-0.5">
-                                  <Clock className="h-4 w-4 text-yellow-600" />
-                                  <span className="text-xs text-yellow-700 font-medium">
+                                  <Clock className="h-4 w-4 text-amber-500" />
+                                  <span className="text-[0.65rem] text-amber-600 font-semibold tabular-nums">
                                     {cell.totalHours}h
                                   </span>
                                 </div>
@@ -214,7 +221,7 @@ export function TeamClient() {
                             </TableCell>
                           );
                         })}
-                        <TableCell className="text-center font-medium">
+                        <TableCell className="text-center font-semibold tabular-nums">
                           {weekTotal > 0 ? `${weekTotal}h` : "—"}
                         </TableCell>
                       </TableRow>

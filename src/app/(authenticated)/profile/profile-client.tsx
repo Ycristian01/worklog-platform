@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { LogOut, Github, Calendar } from "lucide-react";
+import { LogOut, Github, Calendar, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { useGitHubOrgs, useUpdateGitHubSettings } from "@/lib/hooks";
 import { toast } from "sonner";
@@ -57,28 +57,28 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
   const githubConnected = connectedProviders.has("github");
 
   return (
-    <div className="mx-auto max-w-2xl p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Profile</h1>
+    <div className="mx-auto max-w-2xl p-6 space-y-6 animate-fade-in">
+      <h1 className="font-display text-3xl font-semibold tracking-tight">Profile</h1>
 
-      <Card>
+      <Card className="shadow-sm overflow-visible">
         <CardHeader>
-          <CardTitle>Account</CardTitle>
+          <CardTitle className="font-display text-lg">Account</CardTitle>
           <CardDescription>Your account information</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16">
+            <Avatar className="h-16 w-16 ring-2 ring-border/50 shadow-md">
               <AvatarImage src={user.image ?? undefined} />
-              <AvatarFallback className="text-lg">{initials}</AvatarFallback>
+              <AvatarFallback className="text-lg font-medium bg-secondary">{initials}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-lg font-medium">{user.name}</p>
+              <p className="text-lg font-semibold">{user.name}</p>
               <p className="text-sm text-muted-foreground">{user.email}</p>
-              <div className="mt-1 flex items-center gap-2">
-                <Badge variant="secondary" className="capitalize">
+              <div className="mt-1.5 flex items-center gap-2">
+                <Badge variant="secondary" className="capitalize font-medium">
                   {user.role}
                 </Badge>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground/70">
                   Joined {format(new Date(user.createdAt), "MMM d, yyyy")}
                 </span>
               </div>
@@ -87,14 +87,14 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Connected Integrations</CardTitle>
+          <CardTitle className="font-display text-lg">Connected Integrations</CardTitle>
           <CardDescription>
             Services linked to your account for automatic worklog generation
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-1">
           {(["google", "github"] as const).map((provider) => {
             const meta = PROVIDER_META[provider];
             const integration = integrations.find((i) => i.provider === provider);
@@ -102,22 +102,24 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
 
             return (
               <div key={provider}>
-                <div className="flex items-center justify-between py-2">
+                <div className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
-                    {meta.icon}
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
+                      {meta.icon}
+                    </div>
                     <div>
                       <p className="text-sm font-medium">{meta.label}</p>
                       {connected && integration && (
                         <p className="text-xs text-muted-foreground">
                           Connected {format(new Date(integration.connectedAt), "MMM d, yyyy")}
                           {integration.lastSyncAt &&
-                            ` · Last synced ${format(new Date(integration.lastSyncAt), "MMM d, yyyy h:mm a")}`}
+                            ` · Last synced ${format(new Date(integration.lastSyncAt), "MMM d, h:mm a")}`}
                         </p>
                       )}
                     </div>
                   </div>
                   {connected ? (
-                    <Badge variant="outline" className="text-green-600 border-green-600">
+                    <Badge variant="outline" className="text-emerald-600 border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20 dark:border-emerald-800 font-medium">
                       Connected
                     </Badge>
                   ) : (
@@ -125,12 +127,14 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
                       variant="outline"
                       size="sm"
                       onClick={() => signIn(provider, { callbackUrl: "/profile" })}
+                      className="border-border/60 hover:border-accent/30 hover:text-accent"
                     >
+                      <ExternalLink className="mr-1.5 h-3 w-3" />
                       Connect
                     </Button>
                   )}
                 </div>
-                <Separator />
+                <Separator className="bg-border/40" />
               </div>
             );
           })}
@@ -139,11 +143,12 @@ export function ProfileClient({ user, integrations }: ProfileProps) {
 
       {githubConnected && <GitHubOrgSelector />}
 
-      <Card>
+      <Card className="shadow-sm">
         <CardContent className="pt-6">
           <Button
             variant="destructive"
             onClick={() => signOut({ callbackUrl: "/login" })}
+            className="transition-all"
           >
             <LogOut className="mr-2 h-4 w-4" />
             Sign out
@@ -180,9 +185,9 @@ function GitHubOrgSelector() {
   if (data.orgs.length === 0) return null;
 
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>GitHub Settings</CardTitle>
+        <CardTitle className="font-display text-lg">GitHub Settings</CardTitle>
         <CardDescription>
           Choose which organization to sync activity from
         </CardDescription>
