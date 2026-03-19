@@ -82,19 +82,19 @@ export function CreateEntryDialog({ date, disabled }: CreateEntryDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button size="sm" disabled={disabled}>
-            <Plus className="mr-2 h-4 w-4" />
+          <Button size="sm" disabled={disabled} className="bg-accent text-accent-foreground hover:bg-accent/90 border-0 shadow-sm">
+            <Plus className="mr-1.5 h-3.5 w-3.5" />
             Add Entry
           </Button>
         }
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Manual Entry</DialogTitle>
+          <DialogTitle className="font-display text-xl font-semibold tracking-tight">Add Manual Entry</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-sm font-medium">Description</Label>
             <Input
               id="description"
               value={description}
@@ -105,7 +105,7 @@ export function CreateEntryDialog({ date, disabled }: CreateEntryDialogProps) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="timeHours">Hours</Label>
+              <Label htmlFor="timeHours" className="text-sm font-medium">Hours</Label>
               <Input
                 id="timeHours"
                 type="number"
@@ -118,7 +118,7 @@ export function CreateEntryDialog({ date, disabled }: CreateEntryDialogProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category" className="text-sm font-medium">Category</Label>
               <Select
                 value={categoryId || undefined}
                 onValueChange={(val) => setCategoryId(val ?? "")}
@@ -142,7 +142,7 @@ export function CreateEntryDialog({ date, disabled }: CreateEntryDialogProps) {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes (optional)</Label>
+            <Label htmlFor="notes" className="text-sm font-medium">Notes (optional)</Label>
             <Textarea
               id="notes"
               value={notes}
@@ -151,11 +151,11 @@ export function CreateEntryDialog({ date, disabled }: CreateEntryDialogProps) {
               rows={2}
             />
           </div>
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={createEntry.isPending}>
+            <Button type="submit" disabled={createEntry.isPending} className="bg-accent text-accent-foreground hover:bg-accent/90 border-0">
               {createEntry.isPending ? "Creating..." : "Create Entry"}
             </Button>
           </div>

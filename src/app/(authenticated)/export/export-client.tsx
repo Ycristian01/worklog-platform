@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Download, FileSpreadsheet, FileText, Users, User } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useExport } from "@/lib/hooks";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
@@ -67,6 +68,7 @@ export function ExportClient() {
   const [toDate, setToDate] = useState(() => toDateStr(new Date()));
   const [exportFormat, setExportFormat] = useState<ExportFormat>("xlsx");
   const [scope, setScope] = useState<ExportScope>("self");
+  const [selectedPreset, setSelectedPreset] = useState<string | null>("This month");
   const exportMutation = useExport();
 
   const handleExport = () => {
@@ -96,59 +98,75 @@ export function ExportClient() {
   };
 
   return (
-    <div className="mx-auto max-w-2xl p-6 space-y-6">
+    <div className="mx-auto max-w-2xl p-6 space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-2xl font-bold">Export Worklog</h1>
-        <p className="text-muted-foreground">
+        <h1 className="font-display text-3xl font-semibold tracking-tight">Export Worklog</h1>
+        <p className="mt-1 text-muted-foreground">
           Download your submitted entries as Excel or CSV
         </p>
       </div>
 
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Date Range</CardTitle>
+          <CardTitle className="font-display text-lg">Date Range</CardTitle>
           <CardDescription>
             Select the period to export. Only submitted entries are included.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
-            {presets.map((preset) => (
-              <Button
-                key={preset.label}
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const r = preset.range();
-                  setFromDate(r.from);
-                  setToDate(r.to);
-                }}
-              >
-                {preset.label}
-              </Button>
-            ))}
+            {presets.map((preset) => {
+              const isSelected = selectedPreset === preset.label;
+              return (
+                <Button
+                  key={preset.label}
+                  variant={isSelected ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    const r = preset.range();
+                    setFromDate(r.from);
+                    setToDate(r.to);
+                    setSelectedPreset(preset.label);
+                  }}
+                  className={cn(
+                    "transition-all",
+                    isSelected
+                      ? "bg-accent text-accent-foreground border-accent shadow-sm hover:bg-accent/90"
+                      : "border-border/60 hover:bg-accent/8 hover:text-accent hover:border-accent/30"
+                  )}
+                >
+                  {preset.label}
+                </Button>
+              );
+            })}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="from-date">From</Label>
+              <Label htmlFor="from-date" className="text-sm font-medium">From</Label>
               <Input
                 id="from-date"
                 type="date"
                 value={fromDate}
                 max={toDate || undefined}
-                onChange={(e) => setFromDate(e.target.value)}
+                onChange={(e) => {
+                  setFromDate(e.target.value);
+                  setSelectedPreset(null);
+                }}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="to-date">To</Label>
+              <Label htmlFor="to-date" className="text-sm font-medium">To</Label>
               <Input
                 id="to-date"
                 type="date"
                 value={toDate}
                 min={fromDate || undefined}
                 max={toDateStr(new Date())}
-                onChange={(e) => setToDate(e.target.value)}
+                onChange={(e) => {
+                  setToDate(e.target.value);
+                  setSelectedPreset(null);
+                }}
               />
             </div>
           </div>
@@ -156,9 +174,9 @@ export function ExportClient() {
       </Card>
 
       {isManager && (
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader>
-            <CardTitle>Scope</CardTitle>
+            <CardTitle className="font-display text-lg">Scope</CardTitle>
             <CardDescription>
               Export your entries or the entire team
             </CardDescription>
@@ -190,9 +208,9 @@ export function ExportClient() {
         </Card>
       )}
 
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Format</CardTitle>
+          <CardTitle className="font-display text-lg">Format</CardTitle>
           <CardDescription>
             Excel matches the Trashie worklog format exactly
           </CardDescription>
@@ -224,7 +242,7 @@ export function ExportClient() {
       </Card>
 
       <Button
-        className="w-full"
+        className="w-full bg-accent text-accent-foreground hover:bg-accent/90 border-0 shadow-sm transition-all hover:shadow-md"
         size="lg"
         onClick={handleExport}
         disabled={exportMutation.isPending || !fromDate || !toDate}

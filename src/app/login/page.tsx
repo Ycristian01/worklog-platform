@@ -12,33 +12,53 @@ import {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">WorkLog</CardTitle>
-          <CardDescription>
-            Sign in to manage your daily activity reports
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-          >
-            <GoogleIcon className="mr-2 h-4 w-4" />
-            Sign in with Google
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
-          >
-            <GitHubIcon className="mr-2 h-4 w-4" />
-            Sign in with GitHub
-          </Button>
-        </CardContent>
-      </Card>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background">
+      {/* Decorative background elements */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-accent/5 blur-3xl" />
+        <div className="absolute -bottom-48 -right-48 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-accent/3 blur-3xl" />
+      </div>
+
+      <div className="animate-scale-in relative w-full max-w-sm px-4">
+        <Card className="shadow-xl shadow-foreground/5">
+          <CardHeader className="text-center pb-2">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
+              <svg className="h-6 w-6 text-primary-foreground" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </div>
+            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
+              WorkLog
+            </CardTitle>
+            <CardDescription className="text-balance">
+              Sign in to manage your daily activity reports
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 pt-2">
+            <Button
+              variant="outline"
+              className="w-full h-10 text-sm font-medium transition-all hover:shadow-sm"
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            >
+              <GoogleIcon className="mr-2.5 h-4 w-4" />
+              Sign in with Google
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full h-10 text-sm font-medium transition-all hover:shadow-sm"
+              onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
+            >
+              <GitHubIcon className="mr-2.5 h-4 w-4" />
+              Sign in with GitHub
+            </Button>
+          </CardContent>
+        </Card>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground/60">
+          Automated worklog reporting for engineering teams
+        </p>
+      </div>
     </div>
   );
 }

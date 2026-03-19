@@ -36,20 +36,20 @@ export function MemberDetailClient({ member }: MemberDetailProps) {
     .slice(0, 2);
 
   return (
-    <div className="mx-auto max-w-3xl p-6 space-y-6">
+    <div className="mx-auto max-w-3xl p-6 space-y-6 animate-fade-in">
       {/* Back link + member info */}
       <div className="flex items-center gap-4">
         <Link href="/team">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
-        <Avatar className="h-10 w-10">
+        <Avatar className="h-10 w-10 ring-2 ring-border/50">
           <AvatarImage src={member.image ?? undefined} />
-          <AvatarFallback>{initials}</AvatarFallback>
+          <AvatarFallback className="font-medium bg-secondary">{initials}</AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-xl font-bold">{member.name}</h1>
+          <h1 className="font-display text-xl font-semibold tracking-tight">{member.name}</h1>
           <p className="text-sm text-muted-foreground">Read-only view</p>
         </div>
       </div>
@@ -60,16 +60,18 @@ export function MemberDetailClient({ member }: MemberDetailProps) {
           variant="outline"
           size="icon"
           onClick={() => setSelectedDate(subDays(selectedDate, 1))}
+          className="h-9 w-9 rounded-lg border-border/60"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="min-w-[160px] text-center font-medium">
+        <span className="min-w-[180px] text-center font-medium tabular-nums">
           {format(selectedDate, "EEEE, MMM d, yyyy")}
         </span>
         <Button
           variant="outline"
           size="icon"
           onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+          className="h-9 w-9 rounded-lg border-border/60"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -78,6 +80,7 @@ export function MemberDetailClient({ member }: MemberDetailProps) {
             variant="outline"
             size="sm"
             onClick={() => setSelectedDate(new Date())}
+            className="text-accent hover:text-accent border-border/60"
           >
             Today
           </Button>
@@ -85,11 +88,14 @@ export function MemberDetailClient({ member }: MemberDetailProps) {
       </div>
 
       {/* Stats */}
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-        <span>{entries?.length ?? 0} entries</span>
-        <span className="flex items-center gap-1">
+      <div className="flex items-center gap-4 text-sm">
+        <span className="flex items-center gap-1.5 text-muted-foreground">
+          <span className="font-semibold text-foreground tabular-nums">{entries?.length ?? 0}</span> entries
+        </span>
+        <div className="h-3.5 w-px bg-border/60" />
+        <span className="flex items-center gap-1.5 text-muted-foreground">
           <Clock className="h-3.5 w-3.5" />
-          {totalHours}h total
+          <span className="font-semibold text-foreground tabular-nums">{totalHours}h</span> total
         </span>
       </div>
 
@@ -97,15 +103,15 @@ export function MemberDetailClient({ member }: MemberDetailProps) {
       {entriesLoading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-24 w-full" />
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
           ))}
         </div>
       ) : !entries?.length ? (
-        <p className="py-12 text-center text-muted-foreground">
-          No entries for this date
-        </p>
+        <div className="rounded-xl border-2 border-dashed border-border/50 py-16 text-center">
+          <p className="text-muted-foreground">No entries for this date</p>
+        </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 stagger-children">
           {entries.map((entry) => (
             <EntryCard
               key={entry.id}
